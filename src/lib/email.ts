@@ -65,6 +65,37 @@ export async function sendStageAssignedEmail(opts: {
   })
 }
 
+// ─── Rejection Notification ───────────────────────────────────────────────────
+
+export async function sendRejectionEmail(opts: {
+  to: string[]
+  kitStyleNo: string
+  rejectedAtStage: string
+  rejectedBy: string
+  notes: string
+  kitId: string
+}) {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL
+  await transporter.sendMail({
+    from: FROM,
+    to: opts.to.join(', '),
+    subject: `Kit ${opts.kitStyleNo} rejected at ${opts.rejectedAtStage} — revision required`,
+    html: wrapHtml(`
+      <p style="color:#dc2626;font-weight:700;font-size:15px;">Kit Rejected — Revision Required</p>
+      <p>Kit <strong>${opts.kitStyleNo}</strong> was <strong>rejected</strong> at the 
+         <strong>${opts.rejectedAtStage}</strong> stage by <strong>${opts.rejectedBy}</strong>.</p>
+      ${opts.notes ? `<blockquote style="border-left:3px solid #dc2626;margin:12px 0;padding:8px 12px;background:#fef2f2;color:#7f1d1d;font-style:italic;">${opts.notes}</blockquote>` : ''}
+      <p>The kit has been moved back to <strong>Draft</strong>. Please review the feedback, make the necessary changes, and re-submit for approval.</p>
+      <p>
+        <a href="${appUrl}/kits/${opts.kitId}" 
+           style="display:inline-block;padding:10px 20px;background:#dc2626;color:#fff;text-decoration:none;border-radius:6px;font-weight:600;">
+          Review &amp; Re-submit
+        </a>
+      </p>
+    `),
+  })
+}
+
 // ─── Reminder Emails ─────────────────────────────────────────────────────────
 
 export async function sendPendingReminderEmail(opts: {

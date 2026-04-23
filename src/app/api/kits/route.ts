@@ -47,7 +47,7 @@ export const GET = withAuth(async (req: AuthedRequest) => {
 
 // POST /api/kits — create new kit
 export const POST = withAuth(async (req: AuthedRequest) => {
-  if (req.user.role !== 'store' && req.user.role !== 'admin') {
+  if (req.user.role !== 'store') {
     return apiError('Only Store Executive can create kits', 403)
   }
 
@@ -76,4 +76,4 @@ export const POST = withAuth(async (req: AuthedRequest) => {
   })
 
   return apiSuccess(kit, 201)
-}, ['store', 'admin'])
+}, ['store'])

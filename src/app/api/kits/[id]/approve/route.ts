@@ -4,8 +4,8 @@ import connectDB from '@/lib/mongodb'
 import { withAuth, apiError, apiSuccess, type AuthedRequest } from '@/lib/api'
 import Kit from '@/models/Kit'
 import User from '@/models/User'
-import { sendStageAssignedEmail } from '@/lib/email'
-import { STAGE_ROLE_MAP, STAGE_LABEL_MAP, STAGE_CHECK_MAP } from '@/types'
+import { sendStageAssignedEmail, sendRejectionEmail } from '@/lib/email'
+import { STAGE_ROLE_MAP, STAGE_LABEL_MAP, STAGE_CHECK_MAP, TOTAL_STAGES } from '@/types'
 
 const schema = z.object({
   action: z.enum(['approved', 'rejected']),
@@ -54,11 +54,25 @@ export const POST = withAuth(async (authedReq: AuthedRequest, _ctx: unknown): Pr
     if (notes) currentStage.notes = notes
 
     if (action === 'rejected') {
-      kit.status = 'rejected'
+      // Reset kit to draft so store can revise and re-submit
+      kit.status = 'draft'
+      kit.currentStage = 0
+
+      // Notify the store executive (kit creator)
+      const creator = await User.findById(kit.createdBy).select('email').lean()
+      if (creator) {
+        sendRejectionEmail({
+          to: [creator.email],
+          kitStyleNo: kit.styleNo,
+          rejectedAtStage: STAGE_LABEL_MAP[currentStage.stage],
+          rejectedBy: authedReq.user.name,
+          notes: notes ?? '',
+          kitId: kit._id.toString(),
+        }).catch(() => {})
+      }
     } else {
       const nextStage = kit.currentStage + 1
-      if (nextStage > 5) {
-        // FG Sourcing is the final stage — kit is fully approved
+      if (nextStage > TOTAL_STAGES) {
         kit.status = 'approved'
       } else {
         kit.currentStage = nextStage
@@ -70,7 +84,7 @@ export const POST = withAuth(async (authedReq: AuthedRequest, _ctx: unknown): Pr
         // Send email to next department
         const nextRole = STAGE_ROLE_MAP[nextStage]
         const nextUsers = await User.find({ role: nextRole }).select('email').lean()
-        const emails = nextUsers.map((u) => u.email)
+        const emails = nextUsers.map((u: { email: string }) => u.email)
         if (emails.length > 0) {
           sendStageAssignedEmail({
             to: emails,

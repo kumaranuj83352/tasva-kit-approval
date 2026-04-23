@@ -39,7 +39,7 @@ export const PUT = withAuth(async (req: AuthedRequest, _ctx: unknown) => {
   const kit = await Kit.findById(id)
   if (!kit) return apiError('Kit not found', 404)
   if (kit.status !== 'draft') return apiError('Only draft kits can be edited', 400)
-  if (req.user.role !== 'admin' && kit.createdBy.toString() !== req.user.userId) {
+  if (kit.createdBy.toString() !== req.user.userId) {
     return apiError('Forbidden', 403)
   }
 
@@ -63,7 +63,7 @@ export const PUT = withAuth(async (req: AuthedRequest, _ctx: unknown) => {
   await kit.save()
 
   return apiSuccess(kit)
-}, ['store', 'admin'])
+}, ['store'])
 
 // DELETE /api/kits/[id] — store owner only, draft kits only
 export const DELETE = withAuth(async (req: AuthedRequest, _ctx: unknown) => {

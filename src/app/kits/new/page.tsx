@@ -6,7 +6,7 @@ export default function NewKitPage() {
   const { user } = useAuth()
   if (!user) return null
 
-  if (user.role !== 'store' && user.role !== 'admin') {
+  if (user.role !== 'store') {
     return (
       <div className="card p-10 text-center">
         <p className="text-sm text-gray-500 dark:text-gray-400">You do not have permission to create kits.</p>

@@ -4,6 +4,7 @@ import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/lib/AuthContext'
 import { apiGet, apiPost, apiDelete } from '@/lib/fetchClient'
+import { timeAgo } from '@/lib/utils'
 import type { IKit, IApprovalStage } from '@/types'
 import { STAGE_ROLE_MAP, STAGE_CHECK_MAP } from '@/types'
 
@@ -132,8 +133,8 @@ export default function KitDetailPage() {
     user.role === expectedRole &&
     currentStageData?.status === 'pending'
 
-  const canEdit = (user.role === 'store' || user.role === 'admin') && kit.status === 'draft'
-  const canSubmit = (user.role === 'store' || user.role === 'admin') && kit.status === 'draft'
+  const canEdit = user.role === 'store' && kit.status === 'draft' && kit.createdBy?.toString() === user.id
+  const canSubmit = user.role === 'store' && kit.status === 'draft' && kit.createdBy?.toString() === user.id
   const canDelete = user.role === 'store' && kit.status === 'draft' && kit.createdBy?.toString() === user.id
 
   async function handleApprove(action: 'approved' | 'rejected') {
@@ -260,8 +261,32 @@ export default function KitDetailPage() {
         </div>
       )}
 
+      {/* ── Rejection notice (draft after rejection) ──── */}
+      {kit.status === 'draft' && kit.stages.some(s => s.status === 'rejected') && (() => {
+        const rejStage = kit.stages.find(s => s.status === 'rejected')!
+        return (
+          <div className="rounded-xl bg-red-50 dark:bg-red-500/[0.08] ring-1 ring-red-200 dark:ring-red-500/30 p-4 space-y-2">
+            <div className="flex items-center gap-2">
+              <svg className="w-4 h-4 text-red-600 dark:text-red-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+              </svg>
+              <p className="text-sm font-semibold text-red-700 dark:text-red-400">
+                Rejected at {rejStage.label} by {rejStage.approverName}
+                {rejStage.approvedAt && <span className="font-normal text-red-500 ml-1">· {timeAgo(rejStage.approvedAt)}</span>}
+              </p>
+            </div>
+            {rejStage.notes && (
+              <p className="text-sm text-red-700/80 dark:text-red-300/80 italic pl-6">&ldquo;{rejStage.notes}&rdquo;</p>
+            )}
+            <p className="text-xs text-red-600/70 dark:text-red-400/60 pl-6">
+              Kit is back in Draft. Edit and re-submit to continue from {rejStage.label}.
+            </p>
+          </div>
+        )
+      })()}
+
       {/* ── Approval progress card ───────────────── */}
-      {kit.status !== 'draft' && (
+      {(kit.status !== 'draft' || kit.stages.some(s => s.status === 'approved' || s.status === 'rejected')) && (
         <div className="card p-5 space-y-5">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-bold text-slate-800 dark:text-slate-100">Approval Progress</h2>
@@ -337,58 +362,74 @@ export default function KitDetailPage() {
 
           {/* History timeline */}
           <div className="border-t border-slate-100 dark:border-white/[0.06] pt-4 space-y-1">
-            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">History</p>
+            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">Stage History</p>
             <div className="space-y-0">
-              {kit.stages.filter(s => s.status !== 'pending' || s.stage <= kit.currentStage).map((stage, idx, arr) => (
-                <div key={stage.stage} className="flex gap-3 pb-3">
-                  {/* Timeline indicator */}
-                  <div className="flex flex-col items-center flex-shrink-0">
-                    <div className={`w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 ${
-                      stage.status === 'approved' ? 'bg-emerald-500'
-                        : stage.status === 'rejected' ? 'bg-red-500'
-                        : stage.stage === kit.currentStage ? 'bg-violet-600'
-                        : 'bg-slate-200 dark:bg-slate-700'
-                    }`}>
-                      {stage.status === 'approved' ? (
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                        </svg>
-                      ) : stage.status === 'rejected' ? (
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      ) : (
-                        <span className="text-slate-500 dark:text-slate-400">{stage.stage}</span>
+              {kit.stages.map((stage, idx, arr) => {
+                const isActive = stage.stage === kit.currentStage && kit.status === 'in_review'
+                const isApproved = stage.status === 'approved'
+                const isRejected = stage.status === 'rejected'
+                const isVisible = isApproved || isRejected || isActive
+
+                if (!isVisible) return null
+
+                return (
+                  <div key={stage.stage} className="flex gap-3 pb-3">
+                    <div className="flex flex-col items-center flex-shrink-0">
+                      <div className={`w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 ${
+                        isApproved ? 'bg-emerald-500'
+                          : isRejected ? 'bg-red-500'
+                          : isActive ? 'bg-violet-600'
+                          : 'bg-slate-200 dark:bg-slate-700'
+                      }`}>
+                        {isApproved ? (
+                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                          </svg>
+                        ) : isRejected ? (
+                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        ) : (
+                          <span className="text-slate-500 dark:text-slate-400">{stage.stage}</span>
+                        )}
+                      </div>
+                      {idx < arr.length - 1 && (
+                        <div className="w-px flex-1 mt-1 bg-slate-100 dark:bg-slate-800 min-h-[12px]" />
                       )}
                     </div>
-                    {idx < arr.length - 1 && (
-                      <div className="w-px flex-1 mt-1 bg-slate-100 dark:bg-slate-800 min-h-[12px]" />
-                    )}
+                    <div className="pb-1 min-w-0 flex-1">
+                      <div className="flex items-baseline gap-2 flex-wrap">
+                        <p className={`text-xs font-semibold leading-none ${
+                          isApproved ? 'text-emerald-700 dark:text-emerald-400'
+                            : isRejected ? 'text-red-600 dark:text-red-400'
+                            : isActive ? 'text-violet-700 dark:text-violet-400'
+                            : 'text-slate-400 dark:text-slate-500'
+                        }`}>
+                          {stage.label}
+                        </p>
+                        {(isApproved || isRejected) && stage.approvedAt && (
+                          <span className="text-[10px] text-slate-400 dark:text-slate-500">
+                            {timeAgo(stage.approvedAt)}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                        {isApproved
+                          ? `Approved by ${stage.approverName}`
+                          : isRejected
+                          ? `Rejected by ${stage.approverName}`
+                          : isActive ? 'Waiting for review…'
+                          : 'Not started'}
+                      </p>
+                      {stage.notes && (
+                        <p className="text-[11px] text-slate-400 dark:text-slate-500 italic mt-1 bg-slate-50 dark:bg-white/[0.03] rounded px-2 py-1 border-l-2 border-slate-200 dark:border-slate-700 max-w-sm">
+                          &ldquo;{stage.notes}&rdquo;
+                        </p>
+                      )}
+                    </div>
                   </div>
-                  {/* Content */}
-                  <div className="pb-1 min-w-0">
-                    <p className={`text-xs font-semibold leading-none ${
-                      stage.status === 'approved' ? 'text-emerald-700 dark:text-emerald-400'
-                        : stage.status === 'rejected' ? 'text-red-600 dark:text-red-400'
-                        : stage.stage === kit.currentStage ? 'text-violet-700 dark:text-violet-400'
-                        : 'text-slate-400 dark:text-slate-500'
-                    }`}>
-                      {stage.label}
-                    </p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">
-                      {stage.status === 'approved'
-                        ? `${stage.approverName} · ${new Date(stage.approvedAt!).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}`
-                        : stage.status === 'rejected'
-                        ? `Rejected by ${stage.approverName}`
-                        : stage.stage === kit.currentStage ? 'Waiting for review…'
-                        : 'Not started'}
-                    </p>
-                    {stage.notes && (
-                      <p className="text-[11px] text-slate-400 dark:text-slate-500 italic mt-0.5 truncate max-w-xs">&ldquo;{stage.notes}&rdquo;</p>
-                    )}
-                  </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </div>
         </div>

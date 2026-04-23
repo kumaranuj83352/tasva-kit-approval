@@ -20,7 +20,7 @@ export default function EditKitPage() {
       .finally(() => setLoading(false))
   }, [id])
 
-  if (!user || (user.role !== 'store' && user.role !== 'admin')) {
+  if (!user || user.role !== 'store') {
     return <div className="card p-8 text-center text-sm text-gray-500 dark:text-gray-400">Access denied.</div>
   }
   if (loading) return <div className="card p-8 text-center text-sm text-gray-500 dark:text-gray-400">Loading…</div>

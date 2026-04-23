@@ -96,7 +96,7 @@ export default function DashboardPage() {
           </h1>
           <p className="page-sub">{ROLE_LABEL_MAP[user.role]} · {new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
         </div>
-        {(user.role === 'store' || user.role === 'admin') && (
+        {user.role === 'store' && (
           <Link href="/kits/new" className="btn-primary">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -197,7 +197,7 @@ export default function DashboardPage() {
           </div>
           <p className="text-sm font-bold text-slate-700 dark:text-slate-300">No kits yet</p>
           <p className="text-xs text-slate-400 mt-1 mb-5">Kits created by the store team will appear here.</p>
-          {(user.role === 'store' || user.role === 'admin') && (
+          {user.role === 'store' && (
             <Link href="/kits/new" className="btn-primary inline-flex">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
               Create first kit

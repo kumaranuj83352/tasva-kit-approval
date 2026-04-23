@@ -54,7 +54,7 @@ function UsersSection() {
                     {ROLE_LABEL_MAP[u.role]}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-gray-400 text-xs hidden md:table-cell">
+                <td className="px-4 py-3 text-slate-400 text-xs hidden md:table-cell">
                   {new Date(u.createdAt).toLocaleDateString('en-IN')}
                 </td>
                 <td className="px-4 py-3 text-right">
@@ -151,9 +151,9 @@ function AllowedEmailsSection() {
       {error && <p className="px-5 py-2 text-xs text-red-600 dark:text-red-400">{error}</p>}
 
       {loading ? (
-        <div className="p-6 text-sm text-gray-400"><div className="skeleton h-4 w-24 rounded m-6" /></div>
+        <div className="p-6 text-sm text-slate-400"><div className="skeleton h-4 w-24 rounded m-6" /></div>
       ) : list.length === 0 ? (
-        <div className="p-6 text-sm text-gray-400">No allowed emails yet.</div>
+        <div className="p-6 text-sm text-slate-400">No allowed emails yet.</div>
       ) : (
         <table className="w-full text-sm">
           <thead>
@@ -171,7 +171,7 @@ function AllowedEmailsSection() {
                 <td className="px-4 py-3">
                   <span className="badge-draft">{ROLE_LABEL_MAP[item.role]}</span>
                 </td>
-                <td className="px-4 py-3 text-gray-400 text-xs hidden md:table-cell">
+                <td className="px-4 py-3 text-slate-400 text-xs hidden md:table-cell">
                   {new Date(item.createdAt).toLocaleDateString('en-IN')}
                 </td>
                 <td className="px-4 py-3 text-right">

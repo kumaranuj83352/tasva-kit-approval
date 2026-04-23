@@ -2,7 +2,7 @@ import type { IApprovalStage, UserRole } from '@/types'
 import { STAGE_ROLE_MAP, STAGE_LABEL_MAP, LEAD_TIME_DAYS, ESCALATION_DELAY_DAYS, ESCALATION_WARNING_DAYS } from '@/types'
 
 export function buildInitialStages(): IApprovalStage[] {
-  return [1, 2, 3, 4, 5, 6].map((stage) => ({
+  return [1, 2, 3, 4, 5].map((stage) => ({
     stage,
     role: STAGE_ROLE_MAP[stage] as UserRole,
     label: STAGE_LABEL_MAP[stage],

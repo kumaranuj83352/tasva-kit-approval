@@ -6,7 +6,6 @@ export const STAGE_ROLE_MAP: Record<number, UserRole> = {
   3: 'design',
   4: 'bnm',
   5: 'fgsourcing',
-  6: 'admin',
 }
 
 export const STAGE_LABEL_MAP: Record<number, string> = {
@@ -15,7 +14,6 @@ export const STAGE_LABEL_MAP: Record<number, string> = {
   3: 'Design Team',
   4: 'BNM Team',
   5: 'FG Sourcing',
-  6: 'Final Sign',
 }
 
 export const STAGE_CHECK_MAP: Record<number, string> = {
@@ -24,8 +22,9 @@ export const STAGE_CHECK_MAP: Record<number, string> = {
   3: 'Shade, texture, fall',
   4: 'Usage & costing impact',
   5: 'Vendor suitability',
-  6: 'All teams sign on card',
 }
+
+export const TOTAL_STAGES = 5
 
 export const ROLE_LABEL_MAP: Record<UserRole, string> = {
   admin: 'Admin',

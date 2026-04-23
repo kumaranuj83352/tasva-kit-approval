@@ -26,36 +26,37 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-slate-50 dark:bg-[#080c14]">
-      {/* Ambient glow */}
+    <div className="min-h-screen flex items-center justify-center px-4 bg-slate-50 dark:bg-[#090d1b]">
+      {/* Ambient glows */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 -left-40 w-96 h-96 bg-violet-400/10 dark:bg-violet-600/8 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-indigo-400/10 dark:bg-indigo-600/8 rounded-full blur-3xl" />
+        <div className="absolute -top-60 -left-60 w-[500px] h-[500px] bg-violet-400/8 dark:bg-violet-600/6 rounded-full blur-3xl" />
+        <div className="absolute -bottom-60 -right-60 w-[500px] h-[500px] bg-indigo-400/8 dark:bg-indigo-600/6 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-violet-300/5 dark:bg-violet-500/4 rounded-full blur-3xl" />
       </div>
 
       <div className="relative w-full max-w-sm">
         {/* Logo mark */}
-        <div className="flex justify-center mb-8">
-          <div className="w-11 h-11 rounded-2xl bg-violet-600 flex items-center justify-center shadow-lg shadow-violet-600/30">
-            <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z" />
+        <div className="flex justify-center mb-7">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-violet-700 flex items-center justify-center shadow-xl shadow-violet-600/25">
+            <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
             </svg>
           </div>
         </div>
 
-        <div className="text-center mb-8">
+        <div className="text-center mb-7">
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-            Digital Kit Approval
+            Kit Approval
           </h1>
           <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-            Respectful follow-through without approval fatigue.
+            Sign in to manage your fabric kit reviews
           </p>
         </div>
 
-        <div className="card p-6">
+        <div className="card p-7 space-y-5">
           <form onSubmit={handleSubmit} className="space-y-4" noValidate>
             <div>
-              <label htmlFor="email" className="label">Email</label>
+              <label htmlFor="email" className="label">Email address</label>
               <input
                 id="email"
                 type="email"
@@ -83,7 +84,7 @@ function LoginForm() {
             </div>
 
             {error && (
-              <div className="flex items-center gap-2 rounded-lg bg-red-50 dark:bg-red-500/10 px-3 py-2.5 text-sm text-red-700 dark:text-red-400 ring-1 ring-red-200 dark:ring-red-500/30">
+              <div className="flex items-center gap-2.5 rounded-xl bg-red-50 dark:bg-red-500/10 px-3.5 py-3 text-sm text-red-700 dark:text-red-400 ring-1 ring-red-200 dark:ring-red-500/30">
                 <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
                 </svg>
@@ -91,21 +92,21 @@ function LoginForm() {
               </div>
             )}
 
-            <button type="submit" disabled={loading} className="btn-primary w-full mt-2">
+            <button type="submit" disabled={loading} className="btn-primary w-full mt-1">
               {loading ? (
                 <><span className="spinner" /> Signing in…</>
-              ) : 'Sign in'}
+              ) : 'Sign in →'}
             </button>
           </form>
-        </div>
 
-        <div className="mt-4 flex items-center justify-between text-sm px-1">
-          <Link href="/reset-password" className="text-violet-600 dark:text-violet-400 hover:underline font-medium">
-            Forgot password?
-          </Link>
-          <Link href="/signup" className="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
-            Request access →
-          </Link>
+          <div className="border-t border-slate-100 dark:border-white/[0.06] pt-4 flex items-center justify-between text-xs">
+            <Link href="/reset-password" className="text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 font-medium transition-colors">
+              Forgot password?
+            </Link>
+            <Link href="/signup" className="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors">
+              Request access →
+            </Link>
+          </div>
         </div>
       </div>
     </div>

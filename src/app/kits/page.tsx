@@ -85,7 +85,8 @@ export default function KitsPage() {
         <div>
           <h1 className="page-title">Kit Cards</h1>
           {myPendingCount > 0 && (
-            <p className="text-sm text-amber-600 dark:text-amber-400 font-medium mt-0.5">
+            <p className="text-sm text-amber-600 dark:text-amber-400 font-semibold mt-0.5 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse inline-block" />
               {myPendingCount} kit{myPendingCount !== 1 ? 's' : ''} awaiting your approval
             </p>
           )}
@@ -101,29 +102,34 @@ export default function KitsPage() {
       </div>
 
       {/* Filter tabs */}
-      <div className="flex gap-1 flex-wrap">
-        {(['all', 'draft', 'in_review', 'approved', 'rejected'] as const).map((f) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-              filter === f
-                ? 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 ring-1 ring-violet-200 dark:ring-violet-700/50'
-                : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200'
-            }`}
-          >
-            {f === 'all' ? `All (${kits.length})` :
-             f === 'in_review' ? `In Review (${kits.filter(k => k.status === 'in_review').length})` :
-             `${f.charAt(0).toUpperCase() + f.slice(1)} (${kits.filter(k => k.status === f).length})`}
-          </button>
-        ))}
+      <div className="flex gap-1.5 flex-wrap">
+        {(['all', 'draft', 'in_review', 'approved', 'rejected'] as const).map((f) => {
+          const count = f === 'all' ? kits.length : kits.filter(k => k.status === f).length
+          const isActive = filter === f
+          return (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 ${
+                isActive
+                  ? 'bg-violet-600 text-white shadow-sm shadow-violet-600/30'
+                  : 'text-slate-500 dark:text-slate-400 bg-white dark:bg-white/[0.04] ring-1 ring-slate-200 dark:ring-white/[0.06] hover:ring-violet-200 dark:hover:ring-violet-500/30 hover:text-slate-700 dark:hover:text-slate-200'
+              }`}
+            >
+              {f === 'all' ? 'All' : f === 'in_review' ? 'In Review' : f.charAt(0).toUpperCase() + f.slice(1)}
+              <span className={`ml-1.5 ${isActive ? 'text-white/70' : 'text-slate-400 dark:text-slate-500'}`}>
+                {count}
+              </span>
+            </button>
+          )
+        })}
       </div>
 
       {loading ? (
         <div className="card overflow-hidden">
-          <div className="divide-y divide-slate-100 dark:divide-slate-800">
+          <div className="divide-y divide-slate-100 dark:divide-white/[0.04]">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="flex items-center gap-4 px-4 py-3.5">
+              <div key={i} className="flex items-center gap-4 px-5 py-4">
                 <div className="skeleton h-4 w-28 rounded" />
                 <div className="skeleton h-4 w-16 rounded hidden sm:block" />
                 <div className="skeleton h-4 w-20 rounded hidden md:block" />
@@ -134,7 +140,12 @@ export default function KitsPage() {
         </div>
       ) : filtered.length === 0 ? (
         <div className="card p-12 text-center">
-          <p className="text-sm font-medium text-slate-700 dark:text-slate-300">No kits found</p>
+          <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-4">
+            <svg className="w-6 h-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+            </svg>
+          </div>
+          <p className="text-sm font-bold text-slate-700 dark:text-slate-300">No kits found</p>
           <p className="text-xs text-slate-400 mt-1">Try a different filter.</p>
         </div>
       ) : (
@@ -142,17 +153,17 @@ export default function KitsPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
-                  <th className="text-left px-4 py-2.5 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Style No</th>
-                  <th className="text-left px-4 py-2.5 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide hidden sm:table-cell">Season</th>
-                  <th className="text-left px-4 py-2.5 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide hidden md:table-cell">Date</th>
-                  <th className="text-left px-4 py-2.5 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide hidden lg:table-cell">Fabrics</th>
-                  <th className="text-left px-4 py-2.5 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide hidden md:table-cell">Stage</th>
-                  <th className="text-left px-4 py-2.5 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Status</th>
+                <tr className="border-b border-slate-100 dark:border-white/[0.06] bg-slate-50/60 dark:bg-white/[0.02]">
+                  <th className="text-left px-5 py-3 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Style No</th>
+                  <th className="text-left px-5 py-3 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide hidden sm:table-cell">Season</th>
+                  <th className="text-left px-5 py-3 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide hidden md:table-cell">Date</th>
+                  <th className="text-left px-5 py-3 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide hidden lg:table-cell">Fabrics</th>
+                  <th className="text-left px-5 py-3 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide hidden md:table-cell">Stage</th>
+                  <th className="text-left px-5 py-3 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Status</th>
                   <th />
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+              <tbody className="divide-y divide-slate-100 dark:divide-white/[0.04]">
                 {filtered.map((kit) => <KitRow key={kit._id} kit={kit} />)}
               </tbody>
             </table>

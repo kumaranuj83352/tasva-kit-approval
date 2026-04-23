@@ -57,7 +57,8 @@ export const POST = withAuth(async (authedReq: AuthedRequest, _ctx: unknown): Pr
       kit.status = 'rejected'
     } else {
       const nextStage = kit.currentStage + 1
-      if (nextStage > 6) {
+      if (nextStage > 5) {
+        // FG Sourcing is the final stage — kit is fully approved
         kit.status = 'approved'
       } else {
         kit.currentStage = nextStage

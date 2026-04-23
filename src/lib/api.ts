@@ -5,10 +5,10 @@ import type { AuthTokenPayload, UserRole } from '@/types'
 export type AuthedRequest = NextRequest & { user: AuthTokenPayload }
 
 export function withAuth(
-  handler: (req: AuthedRequest, ctx?: unknown) => Promise<NextResponse>,
+  handler: (req: AuthedRequest, ctx: unknown) => Promise<NextResponse>,
   allowedRoles?: UserRole[]
 ) {
-  return async (req: NextRequest, ctx?: unknown): Promise<NextResponse> => {
+  return async (req: NextRequest, ctx: unknown): Promise<NextResponse> => {
     const authHeader = req.headers.get('authorization')
     if (!authHeader?.startsWith('Bearer ')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

@@ -23,8 +23,8 @@ const updateSchema = z.object({
 type RouteContext = { params: Promise<{ id: string }> }
 
 // GET /api/kits/[id]
-export const GET = withAuth(async (req: AuthedRequest, ctx: RouteContext) => {
-  const { id } = await ctx.params
+export const GET = withAuth(async (req: AuthedRequest, _ctx: unknown) => {
+  const { id } = await (_ctx as RouteContext).params
   await connectDB()
   const kit = await Kit.findById(id).lean()
   if (!kit) return apiError('Kit not found', 404)
@@ -32,8 +32,8 @@ export const GET = withAuth(async (req: AuthedRequest, ctx: RouteContext) => {
 })
 
 // PUT /api/kits/[id] — update draft kit
-export const PUT = withAuth(async (req: AuthedRequest, ctx: RouteContext) => {
-  const { id } = await ctx.params
+export const PUT = withAuth(async (req: AuthedRequest, _ctx: unknown) => {
+  const { id } = await (_ctx as RouteContext).params
   await connectDB()
 
   const kit = await Kit.findById(id)
@@ -65,11 +65,14 @@ export const PUT = withAuth(async (req: AuthedRequest, ctx: RouteContext) => {
   return apiSuccess(kit)
 }, ['store', 'admin'])
 
-// DELETE /api/kits/[id] — admin only
-export const DELETE = withAuth(async (req: AuthedRequest, ctx: RouteContext) => {
-  const { id } = await ctx.params
+// DELETE /api/kits/[id] — store owner only, draft kits only
+export const DELETE = withAuth(async (req: AuthedRequest, _ctx: unknown) => {
+  const { id } = await (_ctx as RouteContext).params
   await connectDB()
-  const kit = await Kit.findByIdAndDelete(id)
+  const kit = await Kit.findById(id)
   if (!kit) return apiError('Kit not found', 404)
+  if (kit.status !== 'draft') return apiError('Only draft kits can be deleted', 403)
+  if (kit.createdBy.toString() !== req.user.userId) return apiError('Forbidden', 403)
+  await kit.deleteOne()
   return apiSuccess({ message: 'Kit deleted' })
-}, ['admin'])
+}, ['store'])

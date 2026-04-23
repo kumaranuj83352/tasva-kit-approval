@@ -25,22 +25,22 @@ function KitRow({ kit }: { kit: IKit }) {
 
   return (
     <tr className="table-row-hover group">
-      <td className="px-4 py-3">
-        <Link href={`/kits/${kit._id}`} className="font-semibold text-slate-900 dark:text-slate-100 group-hover:text-violet-600 dark:group-hover:text-violet-400">
+      <td className="px-5 py-3.5">
+        <Link href={`/kits/${kit._id}`} className="font-semibold text-slate-900 dark:text-slate-100 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
           {kit.styleNo}
         </Link>
       </td>
-      <td className="px-4 py-3 text-slate-500 dark:text-slate-400 hidden sm:table-cell">{kit.season}</td>
-      <td className="px-4 py-3 text-slate-500 dark:text-slate-400 hidden md:table-cell">
+      <td className="px-5 py-3.5 text-slate-500 dark:text-slate-400 hidden sm:table-cell">{kit.season}</td>
+      <td className="px-5 py-3.5 text-slate-500 dark:text-slate-400 hidden md:table-cell text-xs">
         {new Date(kit.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
       </td>
-      <td className="px-4 py-3 text-slate-500 dark:text-slate-400 hidden lg:table-cell">{kit.fabrics.length}</td>
-      <td className="px-4 py-3 text-xs text-slate-500 dark:text-slate-400 hidden md:table-cell">
+      <td className="px-5 py-3.5 text-slate-500 dark:text-slate-400 hidden lg:table-cell">{kit.fabrics.length}</td>
+      <td className="px-5 py-3.5 text-xs text-slate-400 dark:text-slate-500 hidden md:table-cell">
         {kit.status === 'in_review' ? currentStage?.label ?? '—' : '—'}
       </td>
-      <td className="px-4 py-3">{getStatusBadge()}</td>
-      <td className="px-4 py-3 text-right">
-        <Link href={`/kits/${kit._id}`} className="text-xs text-violet-600 dark:text-violet-400 hover:underline font-medium">
+      <td className="px-5 py-3.5">{getStatusBadge()}</td>
+      <td className="px-5 py-3.5 text-right">
+        <Link href={`/kits/${kit._id}`} className="text-xs font-semibold text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 transition-colors">
           View →
         </Link>
       </td>

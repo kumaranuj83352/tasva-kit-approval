@@ -14,9 +14,8 @@ const schema = z.object({
 
 type RouteContext = { params: Promise<{ id: string }> }
 
-export async function POST(req: AuthedRequest, ctx: RouteContext): Promise<NextResponse> {
-  return withAuth(async (authedReq: AuthedRequest) => {
-    const { id } = await ctx.params
+export const POST = withAuth(async (authedReq: AuthedRequest, _ctx: unknown): Promise<NextResponse> => {
+    const { id } = await (_ctx as RouteContext).params
 
     let body: unknown
     try {
@@ -87,5 +86,4 @@ export async function POST(req: AuthedRequest, ctx: RouteContext): Promise<NextR
     await kit.save()
 
     return apiSuccess(kit)
-  })(req)
-}
+})

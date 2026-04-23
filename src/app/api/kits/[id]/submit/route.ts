@@ -10,9 +10,8 @@ import { buildInitialStages } from '@/lib/utils'
 type RouteContext = { params: Promise<{ id: string }> }
 
 // POST /api/kits/[id]/submit — submit draft for review
-export async function POST(req: AuthedRequest, ctx: RouteContext): Promise<NextResponse> {
-  return withAuth(async (authedReq: AuthedRequest) => {
-    const { id } = await ctx.params
+export const POST = withAuth(async (authedReq: AuthedRequest, _ctx: unknown): Promise<NextResponse> => {
+    const { id } = await (_ctx as RouteContext).params
 
     if (authedReq.user.role !== 'store' && authedReq.user.role !== 'admin') {
       return apiError('Only Store Executive can submit kits', 403)
@@ -52,5 +51,4 @@ export async function POST(req: AuthedRequest, ctx: RouteContext): Promise<NextR
     }
 
     return apiSuccess(kit)
-  })(req)
-}
+})

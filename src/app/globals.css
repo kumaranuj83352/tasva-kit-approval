@@ -11,7 +11,7 @@
   * { box-sizing: border-box; }
 
   body {
-    @apply bg-slate-50 dark:bg-[#080c14] text-slate-900 dark:text-slate-100 antialiased;
+    @apply bg-slate-50 dark:bg-[#090d1b] text-slate-900 dark:text-slate-100 antialiased;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
@@ -19,7 +19,6 @@
     @apply bg-violet-600/20 text-violet-900 dark:bg-violet-400/20 dark:text-violet-200;
   }
 
-  /* Smooth scrolling */
   html { scroll-behavior: smooth; }
 }
 
@@ -73,13 +72,15 @@
 
   /* ── Cards ──────────────────────────────────── */
   .card {
-    @apply bg-white dark:bg-slate-900/80 rounded-xl
-      ring-1 ring-slate-200 dark:ring-slate-800
-      shadow-[0_2px_8px_rgba(0,0,0,.06)] dark:shadow-[0_2px_12px_rgba(0,0,0,.3)];
+    @apply bg-white dark:bg-[#0f1628] rounded-xl
+      ring-1 ring-slate-200/80 dark:ring-white/[0.06]
+      shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)]
+      dark:shadow-[0_1px_3px_rgba(0,0,0,0.4)];
   }
 
   .card-hover {
-    @apply card hover:ring-violet-300 dark:hover:ring-violet-700 hover:shadow-[0_4px_16px_rgba(124,58,237,.12)]
+    @apply card hover:ring-violet-200 dark:hover:ring-violet-500/30
+      hover:shadow-[0_4px_16px_rgba(124,58,237,0.1)]
       transition-all duration-200 cursor-pointer;
   }
 
@@ -143,12 +144,10 @@
 }
 
 @layer utilities {
-  /* Gradient text */
   .text-gradient {
     @apply bg-gradient-to-r from-violet-600 to-indigo-500 bg-clip-text text-transparent;
   }
 
-  /* Subtle glow for dark mode interactive elements */
   .glow-sm {
     box-shadow: 0 0 12px 0 rgb(124 58 237 / 0.25);
   }
@@ -158,85 +157,4 @@
   .no-print { display: none !important; }
   body { background: white !important; color: black !important; }
   .card { box-shadow: none !important; border: 1px solid #e2e8f0 !important; }
-}
-
-@layer base {
-  :root {
-    --bg: 249 250 251;
-    --surface: 255 255 255;
-    --border: 229 231 235;
-    --text-primary: 17 24 39;
-    --text-secondary: 107 114 128;
-    --accent: 79 70 229;
-  }
-
-  .dark {
-    --bg: 3 7 18;
-    --surface: 15 23 42;
-    --border: 30 41 59;
-    --text-primary: 248 250 252;
-    --text-secondary: 148 163 184;
-    --accent: 99 102 241;
-  }
-
-  * {
-    @apply border-gray-200 dark:border-gray-800;
-  }
-
-  body {
-    @apply bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-50 antialiased;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-  }
-}
-
-@layer components {
-  .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors;
-  }
-
-  .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-md bg-white dark:bg-gray-800 px-4 py-2 text-sm font-semibold text-gray-900 dark:text-gray-100 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors;
-  }
-
-  .btn-danger {
-    @apply inline-flex items-center justify-center gap-2 rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors;
-  }
-
-  .input {
-    @apply block w-full rounded-md border-0 bg-white dark:bg-gray-800 px-3 py-2 text-gray-900 dark:text-gray-100 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm;
-  }
-
-  .label {
-    @apply block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1;
-  }
-
-  .card {
-    @apply bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm;
-  }
-
-  .badge-pending {
-    @apply inline-flex items-center rounded-full bg-amber-50 dark:bg-amber-900/20 px-2.5 py-0.5 text-xs font-medium text-amber-700 dark:text-amber-400 ring-1 ring-inset ring-amber-600/20;
-  }
-
-  .badge-approved {
-    @apply inline-flex items-center rounded-full bg-green-50 dark:bg-green-900/20 px-2.5 py-0.5 text-xs font-medium text-green-700 dark:text-green-400 ring-1 ring-inset ring-green-600/20;
-  }
-
-  .badge-delayed {
-    @apply inline-flex items-center rounded-full bg-red-50 dark:bg-red-900/20 px-2.5 py-0.5 text-xs font-medium text-red-700 dark:text-red-400 ring-1 ring-inset ring-red-600/20;
-  }
-
-  .badge-draft {
-    @apply inline-flex items-center rounded-full bg-gray-50 dark:bg-gray-800 px-2.5 py-0.5 text-xs font-medium text-gray-600 dark:text-gray-400 ring-1 ring-inset ring-gray-500/20;
-  }
-
-  .badge-rejected {
-    @apply inline-flex items-center rounded-full bg-red-50 dark:bg-red-900/20 px-2.5 py-0.5 text-xs font-medium text-red-700 dark:text-red-400 ring-1 ring-inset ring-red-600/20;
-  }
-}
-
-@media print {
-  .no-print { display: none !important; }
-  body { background: white !important; }
-  .card { box-shadow: none !important; border: 1px solid #ccc !important; }
 }
